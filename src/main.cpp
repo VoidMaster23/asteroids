@@ -2,6 +2,14 @@
 
 Texture2D atlas;
 
+//TODO: make classes for rocks, ship and bullets
+//TODO: ship needs to have a triangular bounding box, 
+//TODO: rocks need circular bounding boxes
+
+// TODO: ship needs oval bounding box
+
+
+
 int main() {
     
     // Initialization
