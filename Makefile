@@ -16,8 +16,11 @@ target := $(buildDir)/$(executable)
 sources := $(call rwildcard,src/,*.cpp)
 objects := $(patsubst src/%, $(buildDir)/%, $(patsubst %.cpp, %.o, $(sources)))
 depends := $(patsubst %.o, %.d, $(objects))
-compileFlags := -std=c++17 -I include
+compileFlags := -std=c++20 -I include
 linkFlags = -L lib/$(platform) -l raylib
+assetDir := assets
+ASSETS := $(wildcard $(assetDir)/*)
+targetAssets := $(patsubst $(assetDir)/%,$(buildDir)/assets/%,$(ASSETS))
 
 # Check for Windows
 ifeq ($(OS), Windows_NT)
@@ -81,11 +84,15 @@ lib: submodules
 	$(call COPY,vendor/raylib/src,lib/$(platform),libraylib.a)
 
 # Link the program and create the executable
-$(target): $(objects)
+$(target): $(objects) $(targetAssets)
 	$(CXX) $(objects) -o $(target) $(linkFlags)
 
 # Add all rules from dependency files
 -include $(depends)
+
+$(buildDir)/assets/%: $(assetDir)/%
+	$(MKDIR) $(dir $@)
+	cp $< $@
 
 # Compile objects to the build directory
 $(buildDir)/%.o: src/%.cpp Makefile
